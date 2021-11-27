@@ -157,7 +157,7 @@ team_dashboard_data = pd.DataFrame()
 for i in teams:
     team_data_i = df[(df['Team1']==i) | (df['Team2']==i)]
     metrics_i = pd.DataFrame({'Team': [i],
-                              'WinRate': [round(len(team_data_i[team_data_i['WinTeam']==i])/len(team_data_i), 4) * 100],
+                              'WinRate': [round(len(team_data_i[team_data_i['WinTeam']==i])/len(team_data_i) * 100 , 2)],
                               'Wins': [len(team_data_i[team_data_i['WinTeam']==i])],
                               'Total': [len(team_data_i)]})
     team_dashboard_data = team_dashboard_data.append(metrics_i, ignore_index=True)
