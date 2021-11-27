@@ -189,7 +189,7 @@ st.download_button(
     mime='text/csv',)
 
 # 队伍BP数据
-st.header('队伍BP数据')
+st.write('队伍BP数据')
 team_blue = team_data[team_data['Team1']==team]
 team_red = team_data[team_data['Team2']==team]
 team_blue_ban = pd.DataFrame(pd.DataFrame(team_blue[['Team1Ban1', 'Team1Ban2', 'Team1Ban3', 'Team1Ban4', 'Team1Ban5']].unstack())[0].value_counts()).reset_index()
