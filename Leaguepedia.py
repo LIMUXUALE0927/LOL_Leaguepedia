@@ -126,6 +126,13 @@ df = data[['Tournament', 'Tab', 'DateTime UTC', 'Patch', 'Team1',
              'Team2Pick1', 'Team2Pick2', 'Team2Pick3', 'Team2Pick4', 'Team2Pick5',
              'Team1PicksByRoleOrder', 'Team2PicksByRoleOrder']]
 
+Team1Roles = df['Team1PicksByRoleOrder'].str.split(',', expand=True)
+Team1Roles.columns = ['Team1TOP', 'Team1JUG', 'Team1MID', 'Team1BOT', 'Team1SUP']
+Team2Roles = df['Team2PicksByRoleOrder'].str.split(',', expand=True)
+Team2Roles.columns = ['Team2TOP', 'Team2JUG', 'Team2MID', 'Team2BOT', 'Team2SUP']
+df = df.join(Team1Roles).join(Team2Roles).drop(columns=['Team1PicksByRoleOrder', 'Team2PicksByRoleOrder'])
+df['DateTime UTC'] = pd.to_datetime(df['DateTime UTC']).dt.date
+
 st.dataframe(df)
 
 
@@ -153,12 +160,12 @@ teams = tmp[0].unique()
 team = st.selectbox('请选择要分析的队伍',(teams))
 
 team_data = df[(df['Team1']==team) | (df['Team2']==team)]
-Team1Roles = team_data['Team1PicksByRoleOrder'].str.split(',', expand=True)
-Team1Roles.columns = ['Team1TOP', 'Team1JUG', 'Team1MID', 'Team1BOT', 'Team1SUP']
-Team2Roles = team_data['Team2PicksByRoleOrder'].str.split(',', expand=True)
-Team2Roles.columns = ['Team2TOP', 'Team2JUG', 'Team2MID', 'Team2BOT', 'Team2SUP']
-team_data = team_data.join(Team1Roles).join(Team2Roles).drop(columns=['Team1PicksByRoleOrder', 'Team2PicksByRoleOrder'])
-team_data['DateTime UTC'] = pd.to_datetime(team_data['DateTime UTC']).dt.date
+# Team1Roles = team_data['Team1PicksByRoleOrder'].str.split(',', expand=True)
+# Team1Roles.columns = ['Team1TOP', 'Team1JUG', 'Team1MID', 'Team1BOT', 'Team1SUP']
+# Team2Roles = team_data['Team2PicksByRoleOrder'].str.split(',', expand=True)
+# Team2Roles.columns = ['Team2TOP', 'Team2JUG', 'Team2MID', 'Team2BOT', 'Team2SUP']
+# team_data = team_data.join(Team1Roles).join(Team2Roles).drop(columns=['Team1PicksByRoleOrder', 'Team2PicksByRoleOrder'])
+# team_data['DateTime UTC'] = pd.to_datetime(team_data['DateTime UTC']).dt.date
 
 win_rate = str(round(len(team_data[team_data['WinTeam']==team])/len(team_data), 4) * 100)+'%'
 
