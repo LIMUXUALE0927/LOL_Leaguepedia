@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import mwclient
+import plotly.graph_objects as go
 
 # 简介 --------------------------------------------------------------------------
 st.title('英雄联盟联赛数据查询程序')
@@ -217,7 +218,12 @@ with col3:
     st.write('红色方Ban数据')
     st.dataframe(team_red_ban)
 
-st.plotly_chart(team_ban.set_index('Champion')['Count'])
+
+fig = go.Figure(go.Bar(
+            x=team_ban['Count'],
+            y=team_ban['Champion'],
+            orientation='h'))
+st.plotly_chart(fig, use_container_width=True)
 
 # Pick数据
 team_blue = team_data[team_data['Team1']==team]

@@ -2,3 +2,4 @@ streamlit
 pandas
 streamlit-lottie
 mwclient
+plotly
