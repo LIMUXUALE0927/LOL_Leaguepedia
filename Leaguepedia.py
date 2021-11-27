@@ -276,5 +276,54 @@ team_blue_top = pd.DataFrame(team_blue['Team1TOP'].value_counts()).reset_index()
 team_blue_top.columns = ['Champion', 'Count']
 team_red_top = pd.DataFrame(team_red['Team2TOP'].value_counts()).reset_index()
 team_red_top.columns = ['Champion', 'Count']
-team_top = team_blue_top.merge(team_red_top, how='outer')
+team_top = team_blue_top.append(team_red_top).reset_index().drop(columns=['index'])
 team_top = pd.DataFrame(team_top.groupby(['Champion'])['Count'].sum()).sort_values(by='Count', ascending=False).reset_index()
+
+team_blue_jug = pd.DataFrame(team_blue['Team1JUG'].value_counts()).reset_index()
+team_blue_jug.columns = ['Champion', 'Count']
+team_red_jug = pd.DataFrame(team_red['Team2JUG'].value_counts()).reset_index()
+team_red_jug.columns = ['Champion', 'Count']
+team_jug = team_blue_jug.append(team_red_jug).reset_index().drop(columns=['index'])
+team_jug = pd.DataFrame(team_jug.groupby(['Champion'])['Count'].sum()).sort_values(by='Count', ascending=False).reset_index()
+
+team_blue_mid = pd.DataFrame(team_blue['Team1MID'].value_counts()).reset_index()
+team_blue_mid.columns = ['Champion', 'Count']
+team_red_mid = pd.DataFrame(team_red['Team2MID'].value_counts()).reset_index()
+team_red_mid.columns = ['Champion', 'Count']
+team_mid = team_blue_mid.append(team_red_mid).reset_index().drop(columns=['index'])
+team_mid = pd.DataFrame(team_mid.groupby(['Champion'])['Count'].sum()).sort_values(by='Count', ascending=False).reset_index()
+
+team_blue_bot = pd.DataFrame(team_blue['Team1BOT'].value_counts()).reset_index()
+team_blue_bot.columns = ['Champion', 'Count']
+team_red_bot = pd.DataFrame(team_red['Team2BOT'].value_counts()).reset_index()
+team_red_bot.columns = ['Champion', 'Count']
+team_bot = team_blue_bot.append(team_red_bot).reset_index().drop(columns=['index'])
+team_bot = pd.DataFrame(team_bot.groupby(['Champion'])['Count'].sum()).sort_values(by='Count', ascending=False).reset_index()
+
+team_blue_sup = pd.DataFrame(team_blue['Team1SUP'].value_counts()).reset_index()
+team_blue_sup.columns = ['Champion', 'Count']
+team_red_sup = pd.DataFrame(team_red['Team2SUP'].value_counts()).reset_index()
+team_red_sup.columns = ['Champion', 'Count']
+team_sup = team_blue_sup.append(team_red_sup).reset_index().drop(columns=['index'])
+team_sup = pd.DataFrame(team_sup.groupby(['Champion'])['Count'].sum()).sort_values(by='Count', ascending=False).reset_index()
+
+col1, col2, col3, col4, col5 = st.columns(5)
+with col1:
+    st.write('队伍上单英雄池：')
+    st.dataframe(team_top)
+
+with col2:
+    st.write('队伍打野英雄池：')
+    st.dataframe(team_jug)
+
+with col3:
+    st.write('队伍中单英雄池：')
+    st.dataframe(team_mid)
+
+with col4:
+    st.write('队伍下路英雄池：')
+    st.dataframe(team_bot)
+
+with col5:
+    st.write('队伍辅助英雄池：')
+    st.dataframe(team_sup)
