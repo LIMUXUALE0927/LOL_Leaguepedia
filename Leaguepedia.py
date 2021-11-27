@@ -2,13 +2,29 @@ import streamlit as st
 import pandas as pd
 import mwclient
 
-st.title('Leaguepedia数据查询程序')
+st.title('英雄联盟联赛数据查询程序')
+
+'''
+### 简介：
+
+「英雄联盟联赛数据查询程序」使用Leaguepedia的开发者api来获取全球各大联赛（LPL/LDL/LCK/LEC/LCS等）的职业联赛数据。数据包含每场比赛的各项详细数据。
+
+### 版本：
+
+本程序仍处于测试调试阶段，目前只含有查询各联赛各赛季比赛数据的功能。后续版本会更新更多可供赛训团队人员使用的数据分析功能。**该程序仅限BLG俱乐部内部使用。**
+
+'''
+
+st.markdown('### 联赛数据查询')
 
 # 筛选条件
-selection = ['LPL/2021 Season/Summer Season', 'LCK/2021 Season/Summer Season']
+options = st.multiselect(
+        '请选择联赛和赛季',
+        ['LPL/2021 Season/Summer Season', 'LCK/2021 Season/Summer Season', 'LPL/2021 Season/Spring Season', 'LCK/2021 Season/Spring Season'],
+        ['LPL/2021 Season/Summer Season'])
 
 where = ''
-for i in selection:
+for i in options:
     where += 'SG.OverviewPage = {}'.format("'{}'".format(i)) + ' OR '
 
 conditions_SG = where[:-4]
@@ -32,7 +48,7 @@ SG = pd.DataFrame(SG_data[i]['title'] for i in range(len(SG_data)))
 # BP数据
 # BP条件筛选
 where = ''
-for i in selection:
+for i in options:
     where += 'BP.OverviewPage = {}'.format("'{}'".format(i)) + ' OR '
 
 conditions_BP = where[:-4]
@@ -102,4 +118,18 @@ BP = pd.DataFrame(BP_data[i]['title'] for i in range(len(BP_data)))
 
 data = SG.merge(BP, on='GameId')
 
-st.dataframe(data)
+
+st.dataframe(data[['Tournament', 'Tab', 'DateTime UTC', 'Patch', 'Team1', 'Team2', 'WinTeam', 'Team1Bans', 'Team2Bans', 'Team1Picks', 'Team2Picks']])
+
+@st.cache
+def convert_df(df):
+# IMPORTANT: Cache the conversion to prevent computation on every rerun
+    return df.to_csv().encode('utf-8')
+
+csv = convert_df(data)
+
+st.download_button(
+     label="下载数据",
+     data=csv,
+     file_name='large_df.csv',
+     mime='text/csv',)
