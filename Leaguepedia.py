@@ -171,3 +171,17 @@ col2.metric("队伍胜场", str(team_dashboard_data.loc[team, 'Wins']))
 col3.metric("队伍总场数", str(team_dashboard_data.loc[team, 'Total']))
 
 st.dataframe(team_data)
+
+@st.cache
+def convert_df(df):
+    # IMPORTANT: Cache the conversion to prevent computation on every rerun
+    return df.to_csv().encode('utf-8')
+
+
+csv_2 = convert_df(team_data)
+
+st.download_button(
+    label="下载数据",
+    data=csv_2,
+    file_name='large_df.csv',
+    mime='text/csv',)
