@@ -214,7 +214,7 @@ team_red_ban = pd.DataFrame(pd.DataFrame(team_red[['Team2Ban1', 'Team2Ban2', 'Te
 team_blue_ban.columns = ['Champion', 'Count']
 team_red_ban.columns = ['Champion', 'Count']
 
-team_ban = team_blue_ban.merge(team_red_ban, how='outer')
+team_ban = team_blue_ban.append(team_red_ban).reset_index().drop(columns=['index'])
 team_ban = pd.DataFrame(team_ban.groupby(['Champion'])['Count'].sum()).sort_values(by='Count', ascending=False).reset_index()
 team_ban.columns = ['Champion', 'Count']
 
@@ -253,7 +253,7 @@ team_red_pick = pd.DataFrame(pd.DataFrame(team_red[['Team2Pick1', 'Team2Pick2', 
 team_blue_pick.columns = ['Champion', 'Count']
 team_red_pick.columns = ['Champion', 'Count']
 
-team_pick = team_blue_pick.merge(team_red_pick, how='outer')
+team_pick = team_blue_pick.append(team_red_pick).reset_index().drop(columns=['index'])
 team_pick = pd.DataFrame(team_pick.groupby(['Champion'])['Count'].sum()).sort_values(by='Count', ascending=False).reset_index()
 team_pick.columns = ['Champion', 'Count']
 
@@ -270,3 +270,11 @@ with col2:
 with col3:
     st.write('红色方Pick数据：')
     st.dataframe(team_red_pick)
+
+# 各位置英雄选用数据
+team_blue_top = pd.DataFrame(team_blue['Team1TOP'].value_counts()).reset_index()
+team_blue_top.columns = ['Champion', 'Count']
+team_red_top = pd.DataFrame(team_red['Team2TOP'].value_counts()).reset_index()
+team_red_top.columns = ['Champion', 'Count']
+team_top = team_blue_top.merge(team_red_top, how='outer')
+team_top = pd.DataFrame(team_top.groupby(['Champion'])['Count'].sum()).sort_values(by='Count', ascending=False).reset_index()
