@@ -209,6 +209,18 @@ col1, col2, col3 = st.columns(3)
 with col1:
     st.write('总体Ban数据')
     st.dataframe(team_ban)
+    fig = go.Figure(go.Bar(
+                x=team_ban.head(10)['Count'],
+                y=team_ban.head(10)['Champion'],
+                name='队伍总体ban数据',
+                marker=dict(
+            color='rgba(50, 171, 96, 0.6)',
+            line=dict(
+                color='rgba(50, 171, 96, 1.0)',
+                width=1),
+        ),
+                orientation='h'))
+    st.plotly_chart(fig, use_container_width=True)
 
 with col2:
     st.write('蓝色方Ban数据')
@@ -218,19 +230,6 @@ with col3:
     st.write('红色方Ban数据')
     st.dataframe(team_red_ban)
 
-
-fig = go.Figure(go.Bar(
-            x=team_ban.head(10)['Count'],
-            y=team_ban.head(10)['Champion'],
-            name='队伍总体ban数据',
-            marker=dict(
-        color='rgba(50, 171, 96, 0.6)',
-        line=dict(
-            color='rgba(50, 171, 96, 1.0)',
-            width=1),
-    ),
-            orientation='h'))
-st.plotly_chart(fig, use_container_width=True)
 
 # Pick数据
 team_blue = team_data[team_data['Team1']==team]
