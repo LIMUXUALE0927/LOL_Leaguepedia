@@ -21,7 +21,7 @@ st.markdown('### 联赛数据查询')
 options = st.multiselect(
     '请选择联赛和赛季',
     ['LPL/2021 Season/Summer Season', 'LCK/2021 Season/Summer Season',
-     'LPL/2021 Season/Spring Season', 'LCK/2021 Season/Spring Season'],
+     'LPL/2021 Season/Spring Season', 'LCK/2021 Season/Spring Season', '2021 Season World Championship/Main Event'],
     ['LPL/2021 Season/Summer Season'])
 
 where = ''
