@@ -195,11 +195,22 @@ team_red = team_data[team_data['Team2']==team]
 team_blue_ban = pd.DataFrame(pd.DataFrame(team_blue[['Team1Ban1', 'Team1Ban2', 'Team1Ban3', 'Team1Ban4', 'Team1Ban5']].unstack())[0].value_counts()).reset_index()
 team_red_ban = pd.DataFrame(pd.DataFrame(team_red[['Team2Ban1', 'Team2Ban2', 'Team2Ban3', 'Team2Ban4', 'Team2Ban5']].unstack())[0].value_counts()).reset_index()
 team_blue_ban.columns = ['Champion', 'Count']
-st.dataframe(team_blue_ban)
 team_red_ban.columns = ['Champion', 'Count']
-st.dataframe(team_red_ban)
 
 team_ban = team_blue_ban.merge(team_red_ban, how='outer')
 team_ban = pd.DataFrame(team_ban.groupby(['Champion'])['Count'].sum()).sort_values(by='Count', ascending=False).reset_index()
 team_ban.columns = ['Champion', 'Count']
-st.dataframe(team_ban)
+
+
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.write('总体ban数据')
+    st.dataframe(team_ban)
+
+with col2:
+    st.write('蓝色方ban数据')
+    st.dataframe(team_blue_ban)
+
+with col3:
+    st.write('红色方ban数据')
+    st.dataframe(team_red_ban)
