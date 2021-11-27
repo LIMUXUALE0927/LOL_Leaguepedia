@@ -166,7 +166,7 @@ team_dashboard_data = team_dashboard_data.set_index('Team')
 team_dashboard_data['WinRate_rank'] = team_dashboard_data['WinRate'].rank(ascending=False).astype(int)
 
 col1, col2, col3 = st.columns(3)
-col1.metric("队伍胜率", str(team_dashboard_data.loc[team, 'WinRate'])+'%', team_dashboard_data.loc[team, 'WinRate_rank'])
+col1.metric("队伍胜率", str(team_dashboard_data.loc[team, 'WinRate'])+'%', '第{}名'.format(team_dashboard_data.loc[team, 'WinRate_rank']))
 col2.metric("队伍胜场", str(team_dashboard_data.loc[team, 'Wins']))
 col3.metric("队伍总场数", str(team_dashboard_data.loc[team, 'Total']))
 
