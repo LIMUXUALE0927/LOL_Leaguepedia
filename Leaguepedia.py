@@ -205,7 +205,7 @@ team_ban = pd.DataFrame(team_ban.groupby(['Champion'])['Count'].sum()).sort_valu
 team_ban.columns = ['Champion', 'Count']
 
 
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3 = st.columns(3)
 with col1:
     st.write('总体Ban数据')
     st.dataframe(team_ban)
@@ -219,16 +219,17 @@ with col3:
     st.write('红色方Ban数据')
     st.dataframe(team_red_ban)
 
-with col4:
-    fig = go.Figure(go.Bar(
-                x=team_ban.head(10)['Count'],
-                y=team_ban.head(10)['Champion'],
-                marker=dict(
-                color='rgba(50, 171, 96, 0.6)',
-                line=dict(color='rgba(50, 171, 96, 1.0)', width=1),
-            ),
-                orientation='h'))
-    st.plotly_chart(fig, use_container_width=True)
+# command+/批量注释
+# with col4:
+#     fig = go.Figure(go.Bar(
+#                 x=team_ban.head(10)['Count'],
+#                 y=team_ban.head(10)['Champion'],
+#                 marker=dict(
+#                 color='rgba(50, 171, 96, 0.6)',
+#                 line=dict(color='rgba(50, 171, 96, 1.0)', width=1),
+#             ),
+#                 orientation='h'))
+#     st.plotly_chart(fig, use_container_width=True)
 
 # Pick数据
 team_blue = team_data[team_data['Team1']==team]
