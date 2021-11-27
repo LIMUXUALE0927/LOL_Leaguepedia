@@ -148,6 +148,12 @@ st.markdown('### 队伍数据查询')
 tmp = pd.DataFrame(df[['Team1', 'Team2']].unstack())
 teams = tmp[0].unique()
 
-team = st.selectbox(
-     '请选择要分析的队伍',
-     (teams))
+team = st.selectbox('请选择要分析的队伍',(teams))
+
+team_data = df[(df['Team1']==team) | (df['Team2']==team)]
+win_percent = str(round(len(team_data[team_data['WinTeam']==team])/len(team_data), 4) * 100)+'%'
+
+col1, col2, col3 = st.columns(3)
+col1.metric("队伍胜率", win_percent)
+col2.metric("队伍胜场", "9 mph", "-8%")
+metric("队伍总场数", "86%", "4%")
