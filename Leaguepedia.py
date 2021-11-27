@@ -165,6 +165,8 @@ for i in teams:
 team_dashboard_data = team_dashboard_data.set_index('Team')
 
 col1, col2, col3 = st.columns(3)
-col1.metric("队伍胜率", str(team_dashboard_data.loc[team, 'WinRate']))
+col1.metric("队伍胜率", str(team_dashboard_data.loc[team, 'WinRate'])+'%')
 col2.metric("队伍胜场", str(team_dashboard_data.loc[team, 'Wins']))
 col3.metric("队伍总场数", str(team_dashboard_data.loc[team, 'Total']))
+
+st.dataframe(team_data)
