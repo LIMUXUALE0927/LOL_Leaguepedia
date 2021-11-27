@@ -212,14 +212,12 @@ with col1:
     fig = go.Figure(go.Bar(
                 x=team_ban.head(10)['Count'],
                 y=team_ban.head(10)['Champion'],
-                name='Team Ban Statistics',
                 marker=dict(
-            color='rgba(50, 171, 96, 0.6)',
-            line=dict(
-                color='rgba(50, 171, 96, 1.0)',
-                width=1),
-        ),
+                color='rgba(50, 171, 96, 0.6)',
+                line=dict(color='rgba(50, 171, 96, 1.0)', width=1),
+            ),
                 orientation='h'))
+    fig.update_layout(title='Team Ban Statistics')
     st.plotly_chart(fig, use_container_width=True)
 
 with col2:
