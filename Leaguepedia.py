@@ -4,18 +4,38 @@ import mwclient
 
 st.title('Leaguepedia数据查询程序')
 
+# 筛选条件
+selection = ['LPL/2021 Season/Summer Season', 'LCK/2021 Season/Summer Season']
+
+where = ''
+for i in selection:
+    where += 'SG.OverviewPage = {}'.format("'{}'".format(i)) + ' OR '
+
+conditions_SG = where[:-4]
+
+
 site = mwclient.Site('lol.fandom.com', path='/')
 
 response = site.api('cargoquery',
     limit = 'max',
     tables = "ScoreboardGames=SG",
-    fields = "SG.Tournament, SG.DateTime_UTC, SG.Patch ,SG.Team1, SG.Team2, SG.WinTeam ,SG.Team1Bans, SG.Team2Bans, SG.Team1Picks, SG.Team2Picks, SG.GameId",
-    where = "SG.Tournament='LPL 2021 Summer'"
+    fields = "SG.OverviewPage, SG.Tournament, SG.DateTime_UTC, SG.Patch ,SG.Team1, SG.Team2, SG.WinTeam ,SG.Team1Bans, SG.Team2Bans, SG.Team1Picks, SG.Team2Picks, SG.GameId",
+    where = conditions_SG
 )
 
 SG_data = response['cargoquery']
 
 SG = pd.DataFrame(SG_data[i]['title'] for i in range(len(SG_data)))
+
+
+
+# BP数据
+# BP条件筛选
+where = ''
+for i in selection:
+    where += 'BP.OverviewPage = {}'.format("'{}'".format(i)) + ' OR '
+
+conditions_BP = where[:-4]
 
 columns = '''Team1Role1,
                 Team1Role2,
@@ -73,7 +93,7 @@ response = site.api('cargoquery',
     limit = 'max',
     tables = "PicksAndBansS7=BP",
     fields = columns,
-    where = "BP.OverviewPage='LPL/2021 Season/Summer Season'"
+    where = conditions_BP
 )
 
 BP_data = response['cargoquery']
