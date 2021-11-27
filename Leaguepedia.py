@@ -170,6 +170,7 @@ col1.metric("队伍胜率", str(team_dashboard_data.loc[team, 'WinRate'])+'%', '
 col2.metric("队伍胜场", str(team_dashboard_data.loc[team, 'Wins']))
 col3.metric("队伍总场数", str(team_dashboard_data.loc[team, 'Total']))
 
+st.write('队伍比赛数据')
 st.dataframe(team_data)
 
 @st.cache
