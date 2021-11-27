@@ -118,13 +118,14 @@ BP = pd.DataFrame(BP_data[i]['title'] for i in range(len(BP_data)))
 
 data = SG.merge(BP, on='GameId')
 
-
-st.dataframe(data[['Tournament', 'Tab', 'DateTime UTC', 'Patch', 'Team1',
+df = data[['Tournament', 'Tab', 'DateTime UTC', 'Patch', 'Team1',
              'Team2', 'WinTeam', 'Team1Ban1', 'Team1Ban2', 'Team1Ban3', 'Team1Ban4', 'Team1Ban5',
              'Team2Ban1', 'Team2Ban2', 'Team2Ban3', 'Team2Ban4', 'Team2Ban5',
              'Team1Pick1', 'Team1Pick2', 'Team1Pick3', 'Team1Pick4', 'Team1Pick5',
              'Team2Pick1', 'Team2Pick2', 'Team2Pick3', 'Team2Pick4', 'Team2Pick5',
-             'Team1PicksByRoleOrder', 'Team2PicksByRoleOrder']])
+             'Team1PicksByRoleOrder', 'Team2PicksByRoleOrder']]
+
+st.dataframe(df)
 
 
 @st.cache
@@ -133,10 +134,20 @@ def convert_df(df):
     return df.to_csv().encode('utf-8')
 
 
-csv = convert_df(data)
+csv = convert_df(df)
 
 st.download_button(
     label="下载数据",
     data=csv,
     file_name='large_df.csv',
     mime='text/csv',)
+
+# 队伍数据查询 --------------------------------------------------------------------------
+st.markdown('### 队伍数据查询')
+
+tmp = pd.DataFrame(data[['Team1', 'Team2']].unstack())
+teams = tmp[0].unique()
+
+team = st.selectbox(
+     '请选择要分析的队伍',
+     (teams))
