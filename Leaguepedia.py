@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import mwclient
 
+# 简介 --------------------------------------------------------------------------
 st.title('英雄联盟联赛数据查询程序')
 
 '''
@@ -15,13 +16,15 @@ st.title('英雄联盟联赛数据查询程序')
 
 '''
 
+# 联赛数据查询 --------------------------------------------------------------------------
 st.markdown('### 联赛数据查询')
 
 # 筛选条件
 options = st.multiselect(
-        '请选择联赛和赛季',
-        ['LPL/2021 Season/Summer Season', 'LCK/2021 Season/Summer Season', 'LPL/2021 Season/Spring Season', 'LCK/2021 Season/Spring Season'],
-        ['LPL/2021 Season/Summer Season'])
+    '请选择联赛和赛季',
+    ['LPL/2021 Season/Summer Season', 'LCK/2021 Season/Summer Season',
+     'LPL/2021 Season/Spring Season', 'LCK/2021 Season/Spring Season'],
+    ['LPL/2021 Season/Summer Season'])
 
 where = ''
 for i in options:
@@ -33,16 +36,15 @@ conditions_SG = where[:-4]
 site = mwclient.Site('lol.fandom.com', path='/')
 
 response = site.api('cargoquery',
-    limit = 'max',
-    tables = "ScoreboardGames=SG",
-    fields = "SG.OverviewPage, SG.Tournament, SG.DateTime_UTC, SG.Patch ,SG.Team1, SG.Team2, SG.WinTeam ,SG.Team1Bans, SG.Team2Bans, SG.Team1Picks, SG.Team2Picks, SG.GameId",
-    where = conditions_SG
-)
+                    limit='max',
+                    tables="ScoreboardGames=SG",
+                    fields="SG.OverviewPage, SG.Tournament, SG.DateTime_UTC, SG.Patch ,SG.Team1, SG.Team2, SG.WinTeam ,SG.Team1Bans, SG.Team2Bans, SG.Team1Picks, SG.Team2Picks, SG.GameId",
+                    where=conditions_SG
+                    )
 
 SG_data = response['cargoquery']
 
 SG = pd.DataFrame(SG_data[i]['title'] for i in range(len(SG_data)))
-
 
 
 # BP数据
@@ -106,11 +108,11 @@ columns = '''Team1Role1,
 site = mwclient.Site('lol.fandom.com', path='/')
 
 response = site.api('cargoquery',
-    limit = 'max',
-    tables = "PicksAndBansS7=BP",
-    fields = columns,
-    where = conditions_BP
-)
+                    limit='max',
+                    tables="PicksAndBansS7=BP",
+                    fields=columns,
+                    where=conditions_BP
+                    )
 
 BP_data = response['cargoquery']
 
@@ -119,17 +121,20 @@ BP = pd.DataFrame(BP_data[i]['title'] for i in range(len(BP_data)))
 data = SG.merge(BP, on='GameId')
 
 
-st.dataframe(data[['Tournament', 'Tab', 'DateTime UTC', 'Patch', 'Team1', 'Team2', 'WinTeam', 'Team1Bans', 'Team2Bans', 'Team1Picks', 'Team2Picks']])
+st.dataframe(data[['Tournament', 'Tab', 'DateTime UTC', 'Patch', 'Team1',
+             'Team2', 'WinTeam', 'Team1Bans', 'Team2Bans', 'Team1Picks', 'Team2Picks']])
+
 
 @st.cache
 def convert_df(df):
-# IMPORTANT: Cache the conversion to prevent computation on every rerun
+    # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv().encode('utf-8')
+
 
 csv = convert_df(data)
 
 st.download_button(
-     label="下载数据",
-     data=csv,
-     file_name='large_df.csv',
-     mime='text/csv',)
+    label="下载数据",
+    data=csv,
+    file_name='large_df.csv',
+    mime='text/csv',)
