@@ -156,14 +156,15 @@ win_rate = str(round(len(team_data[team_data['WinTeam']==team])/len(team_data), 
 team_dashboard_data = pd.DataFrame()
 for i in teams:
     team_data_i = df[(df['Team1']==i) | (df['Team2']==i)]
-    metrics_i = pd.DataFrame({'WinRate': round(len(team_data_i[team_data_i['WinTeam']==i])/len(team_data_i), 4) * 100,
-                              'Wins': len(team_data_i[team_data_i['WinTeam']==i]),
-                              'Total': len(team_data_i)})
-    team_dashboard_data.append(metrics_i)
+    metrics_i = pd.DataFrame({'Team': [i],
+                              'WinRate': [round(len(team_data_i[team_data_i['WinTeam']==i])/len(team_data_i), 4) * 100],
+                              'Wins': [len(team_data_i[team_data_i['WinTeam']==i])],
+                              'Total': [len(team_data_i)]})
+    team_dashboard_data = team_dashboard_data.append(metrics_i, ignore_index=True)
 
-st.dataframe(team_dashboard_data)
+team_dashboard_data = team_dashboard_data.set_index('Team')
 
 col1, col2, col3 = st.columns(3)
-col1.metric("队伍胜率", win_rate)
-col2.metric("队伍胜场", "9 mph", "-8%")
-col3.metric("队伍总场数", "86%", "4%")
+col1.metric("队伍胜率", team_dashboard_data.loc['T1', 'WinRate'])
+col2.metric("队伍胜场", team_dashboard_data.loc['T1', 'Wins'])
+col3.metric("队伍总场数", team_dashboard_data.loc['T1', 'Total'])
