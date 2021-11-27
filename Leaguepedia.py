@@ -151,9 +151,19 @@ teams = tmp[0].unique()
 team = st.selectbox('请选择要分析的队伍',(teams))
 
 team_data = df[(df['Team1']==team) | (df['Team2']==team)]
-win_percent = str(round(len(team_data[team_data['WinTeam']==team])/len(team_data), 4) * 100)+'%'
+win_rate = str(round(len(team_data[team_data['WinTeam']==team])/len(team_data), 4) * 100)+'%'
+
+team_dashboard_data = pd.DataFrame()
+for i in teams:
+    team_data_i = df[(df['Team1']==i) | (df['Team2']==i)]
+    metrics_i = pd.DataFrame({'WinRate': round(len(team_data_i[team_data_i['WinTeam']==i])/len(team_data_i), 4) * 100,
+                              'Wins': len(team_data_i[team_data_i['WinTeam']==i]),
+                              'Total': len(team_data_i)})
+    team_dashboard_data.append(metrics_i)
+
+st.dataframe(team_dashboard_data)
 
 col1, col2, col3 = st.columns(3)
-col1.metric("队伍胜率", win_percent)
+col1.metric("队伍胜率", win_rate)
 col2.metric("队伍胜场", "9 mph", "-8%")
 col3.metric("队伍总场数", "86%", "4%")
