@@ -156,4 +156,4 @@ win_percent = str(round(len(team_data[team_data['WinTeam']==team])/len(team_data
 col1, col2, col3 = st.columns(3)
 col1.metric("队伍胜率", win_percent)
 col2.metric("队伍胜场", "9 mph", "-8%")
-metric("队伍总场数", "86%", "4%")
+col3.metric("队伍总场数", "86%", "4%")
