@@ -208,7 +208,6 @@ col1, col2, col3 = st.columns(3)
 with col1:
     st.write('总体Ban数据')
     st.dataframe(team_ban)
-    st.bar_chart(team_ban)
 
 with col2:
     st.write('蓝色方Ban数据')
@@ -218,6 +217,7 @@ with col3:
     st.write('红色方Ban数据')
     st.dataframe(team_red_ban)
 
+st.bar_chart(team_ban)
 
 # Pick数据
 team_blue = team_data[team_data['Team1']==team]
