@@ -190,6 +190,8 @@ st.download_button(
 
 # 队伍BP数据
 st.subheader('队伍BP数据')
+
+# Ban数据
 team_blue = team_data[team_data['Team1']==team]
 team_red = team_data[team_data['Team2']==team]
 team_blue_ban = pd.DataFrame(pd.DataFrame(team_blue[['Team1Ban1', 'Team1Ban2', 'Team1Ban3', 'Team1Ban4', 'Team1Ban5']].unstack())[0].value_counts()).reset_index()
@@ -204,13 +206,40 @@ team_ban.columns = ['Champion', 'Count']
 
 col1, col2, col3 = st.columns(3)
 with col1:
-    st.write('总体ban数据')
+    st.write('总体Ban数据')
     st.dataframe(team_ban)
 
 with col2:
-    st.write('蓝色方ban数据')
+    st.write('蓝色方Ban数据')
     st.dataframe(team_blue_ban)
 
 with col3:
-    st.write('红色方ban数据')
+    st.write('红色方Ban数据')
     st.dataframe(team_red_ban)
+
+
+# Pick数据
+team_blue = team_data[team_data['Team1']==team]
+team_red = team_data[team_data['Team2']==team]
+team_blue_pick = pd.DataFrame(pd.DataFrame(team_blue[['Team1Pick1', 'Team1Pick2', 'Team1Pick3', 'Team1Pick4', 'Team1Pick5']].unstack())[0].value_counts()).reset_index()
+team_red_pick = pd.DataFrame(pd.DataFrame(team_red[['Team2Pick1', 'Team2Pick2', 'Team2Pick3', 'Team2Pick4', 'Team2Pick5']].unstack())[0].value_counts()).reset_index()
+team_blue_pick.columns = ['Champion', 'Count']
+team_red_pick.columns = ['Champion', 'Count']
+
+team_pick = team_blue_pick.merge(team_red_pick, how='outer')
+team_pick = pd.DataFrame(team_pick.groupby(['Champion'])['Count'].sum()).sort_values(by='Count', ascending=False).reset_index()
+team_pick.columns = ['Champion', 'Count']
+
+
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.write('总体Pick数据')
+    st.dataframe(team_pick)
+
+with col2:
+    st.write('蓝色方Pick数据')
+    st.dataframe(team_blue_pick)
+
+with col3:
+    st.write('红色方Pick数据')
+    st.dataframe(team_red_pick)
