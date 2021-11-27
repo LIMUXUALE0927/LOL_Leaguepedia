@@ -153,6 +153,13 @@ teams = tmp[0].unique()
 team = st.selectbox('请选择要分析的队伍',(teams))
 
 team_data = df[(df['Team1']==team) | (df['Team2']==team)]
+Team1Roles = team_data['Team1PicksByRoleOrder'].str.split(',', expand=True)
+Team1Roles.columns = ['Team1TOP', 'Team1JUG', 'Team1MID', 'Team1BOT', 'Team1SUP']
+Team2Roles = team_data['Team2PicksByRoleOrder'].str.split(',', expand=True)
+Team2Roles.columns = ['Team2TOP', 'Team2JUG', 'Team2MID', 'Team2BOT', 'Team2SUP']
+team_data = team_data.join(Team1Roles).join(Team2Roles).drop(columns=['Team1PicksByRoleOrder', 'Team2PicksByRoleOrder'])
+team_data['DateTime UTC'] = pd.to_datetime(team_data['DateTime UTC']).dt.date
+
 win_rate = str(round(len(team_data[team_data['WinTeam']==team])/len(team_data), 4) * 100)+'%'
 
 team_dashboard_data = pd.DataFrame()
@@ -207,16 +214,16 @@ team_ban.columns = ['Champion', 'Count']
 
 col1, col2, col3 = st.columns(3)
 with col1:
-    st.write('总体Ban数据')
+    st.write('总体Ban数据：')
     st.dataframe(team_ban)
 
 
 with col2:
-    st.write('蓝色方Ban数据')
+    st.write('蓝色方Ban数据：')
     st.dataframe(team_blue_ban)
 
 with col3:
-    st.write('红色方Ban数据')
+    st.write('红色方Ban数据：')
     st.dataframe(team_red_ban)
 
 # command+/批量注释
@@ -246,13 +253,13 @@ team_pick.columns = ['Champion', 'Count']
 
 col1, col2, col3 = st.columns(3)
 with col1:
-    st.write('总体Pick数据')
+    st.write('总体Pick数据：')
     st.dataframe(team_pick)
 
 with col2:
-    st.write('蓝色方Pick数据')
+    st.write('蓝色方Pick数据：')
     st.dataframe(team_blue_pick)
 
 with col3:
-    st.write('红色方Pick数据')
+    st.write('红色方Pick数据：')
     st.dataframe(team_red_pick)
