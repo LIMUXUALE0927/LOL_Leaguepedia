@@ -220,8 +220,8 @@ with col3:
 
 
 fig = go.Figure(go.Bar(
-            x=team_ban.head()['Count'],
-            y=team_ban.head()['Champion'],
+            x=team_ban.head(10)['Count'],
+            y=team_ban.head(10)['Champion'],
             name='队伍总体ban数据'
             marker=dict(
         color='rgba(50, 171, 96, 0.6)',
