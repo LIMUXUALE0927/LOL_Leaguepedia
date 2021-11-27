@@ -142,6 +142,7 @@ st.download_button(
     file_name='large_df.csv',
     mime='text/csv',)
 
+
 # 队伍数据查询 --------------------------------------------------------------------------
 st.markdown('### 队伍数据查询')
 
@@ -186,3 +187,18 @@ st.download_button(
     data=csv_2,
     file_name='large_df.csv',
     mime='text/csv',)
+
+# 队伍BP数据
+st.write('队伍BP数据')
+team_blue = team_data[team_data['Team1']==team]
+team_red = team_data[team_data['Team2']==team]
+team_blue_ban = pd.DataFrame(pd.DataFrame(team_blue[['Team1Ban1', 'Team1Ban2', 'Team1Ban3', 'Team1Ban4', 'Team1Ban5']].unstack())[0].value_counts()).reset_index()
+team_red_ban = pd.DataFrame(pd.DataFrame(team_red[['Team2Ban1', 'Team2Ban2', 'Team2Ban3', 'Team2Ban4', 'Team2Ban5']].unstack())[0].value_counts()).reset_index()
+team_blue_ban.columns = ['Champion', 'Count']
+st.table(team_blue_ban)
+team_red_ban.columns = ['Champion', 'Count']
+st.table(team_red_ban)
+
+team_ban = team_blue_ban.merge(team_red_ban, how='outer')
+team_ban = pd.DataFrame(team_ban.groupby(['Champion'])['Count'].sum()).sort_values(by='Count', ascending=False)
+st.table(team_ban)
