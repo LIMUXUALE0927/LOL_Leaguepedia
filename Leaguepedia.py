@@ -220,8 +220,8 @@ with col3:
 
 
 fig = go.Figure(go.Bar(
-            x=team_ban['Count'],
-            y=team_ban['Champion'],
+            x=team_ban.head()['Count'],
+            y=team_ban.head()['Champion'],
             orientation='h'))
 st.plotly_chart(fig, use_container_width=True)
 
