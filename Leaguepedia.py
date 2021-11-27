@@ -145,7 +145,7 @@ st.download_button(
 # 队伍数据查询 --------------------------------------------------------------------------
 st.markdown('### 队伍数据查询')
 
-tmp = pd.DataFrame(data[['Team1', 'Team2']].unstack())
+tmp = pd.DataFrame(df[['Team1', 'Team2']].unstack())
 teams = tmp[0].unique()
 
 team = st.selectbox(
