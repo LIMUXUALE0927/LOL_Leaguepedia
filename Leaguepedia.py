@@ -15,7 +15,7 @@ st.title('英雄联盟联赛数据查询程序')
 '''
 
 # 联赛数据查询 --------------------------------------------------------------------------
-st.markdown('### 联赛数据查询')
+st.header('联赛数据查询')
 
 # 筛选条件
 options = st.multiselect(
@@ -144,7 +144,7 @@ st.download_button(
 
 
 # 队伍数据查询 --------------------------------------------------------------------------
-st.markdown('### 队伍数据查询')
+st.header('队伍数据查询')
 
 tmp = pd.DataFrame(df[['Team1', 'Team2']].unstack())
 teams = tmp[0].unique()
@@ -171,7 +171,7 @@ col1.metric("队伍胜率", str(team_dashboard_data.loc[team, 'WinRate'])+'%', '
 col2.metric("队伍胜场", str(team_dashboard_data.loc[team, 'Wins']))
 col3.metric("队伍总场数", str(team_dashboard_data.loc[team, 'Total']))
 
-st.write('队伍比赛数据')
+st.subheader('队伍比赛数据')
 st.dataframe(team_data)
 
 @st.cache
@@ -189,7 +189,7 @@ st.download_button(
     mime='text/csv',)
 
 # 队伍BP数据
-st.write('队伍BP数据')
+st.subheader('队伍BP数据')
 team_blue = team_data[team_data['Team1']==team]
 team_red = team_data[team_data['Team2']==team]
 team_blue_ban = pd.DataFrame(pd.DataFrame(team_blue[['Team1Ban1', 'Team1Ban2', 'Team1Ban3', 'Team1Ban4', 'Team1Ban5']].unstack())[0].value_counts()).reset_index()
