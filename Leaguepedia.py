@@ -222,6 +222,12 @@ with col3:
 fig = go.Figure(go.Bar(
             x=team_ban.head()['Count'],
             y=team_ban.head()['Champion'],
+            marker=dict(
+        color='rgba(50, 171, 96, 0.6)',
+        line=dict(
+            color='rgba(50, 171, 96, 1.0)',
+            width=1),
+    ),
             orientation='h'))
 st.plotly_chart(fig, use_container_width=True)
 
