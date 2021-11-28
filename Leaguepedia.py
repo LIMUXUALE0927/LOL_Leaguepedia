@@ -3,6 +3,8 @@ import pandas as pd
 import mwclient
 import plotly.graph_objects as go
 
+st.set_page_config(layout="wide")
+
 # 简介 --------------------------------------------------------------------------
 st.title('英雄联盟联赛数据分析程序')
 
@@ -20,7 +22,6 @@ st.sidebar.markdown(
 '''
 )
 
-st.set_page_config(layout="wide")
 
 # 联赛数据查询 --------------------------------------------------------------------------
 st.header('联赛数据查询')
