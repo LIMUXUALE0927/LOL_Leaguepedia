@@ -2,6 +2,12 @@ import streamlit as st
 import pandas as pd
 import mwclient
 import plotly.graph_objects as go
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import RendererAgg
+from matplotlib.figure import Figure
+import seaborn as sns
 
 st.set_page_config(layout="wide")
 
