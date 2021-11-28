@@ -140,7 +140,7 @@ Team2Roles = df['Team2PicksByRoleOrder'].str.split(',', expand=True)
 Team2Roles.columns = ['Team2TOP', 'Team2JUG', 'Team2MID', 'Team2BOT', 'Team2SUP']
 df = df.join(Team1Roles).join(Team2Roles).drop(columns=['Team1PicksByRoleOrder', 'Team2PicksByRoleOrder'])
 df['DateTime UTC'] = pd.to_datetime(df['DateTime UTC']).dt.date
-df = df..sort_values(by=['DateTime UTC'], ascending=False)
+df = df.sort_values(by=['DateTime UTC'], ascending=False)
 
 st.dataframe(df)
 
