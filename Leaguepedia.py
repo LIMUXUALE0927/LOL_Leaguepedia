@@ -4,17 +4,18 @@ import mwclient
 import plotly.graph_objects as go
 
 # 简介 --------------------------------------------------------------------------
-st.title('英雄联盟联赛数据查询程序')
+st.title('英雄联盟联赛数据分析程序')
 
 st.sidebar.markdown(
 '''
 **简介**：
 
-「英雄联盟联赛数据查询程序」使用[Leaguepedia](https://lol.fandom.com/wiki/League_of_Legends_Esports_Wiki)的开发者api来获取全球各大联赛（LPL/LDL/LCK/LEC/LCS等）的职业联赛数据。数据包含每场比赛的各项详细数据。
+「英雄联盟联赛数据分析程序」是使用[Leaguepedia](https://lol.fandom.com/wiki/League_of_Legends_Esports_Wiki)的开发者api来获取全球各大联赛（LPL/LDL/LCK/LEC/LCS等）的职业联赛数据的Python程序。
+程序返回的数据包含各联赛各队伍每场比赛的各项详细数据，赛训团队可按需进行筛选以便后续的准备和分析工作。
 
-本程序仍处于测试调试阶段，目前只含有查询各联赛各赛季比赛数据的功能。后续版本会更新更多可供赛训团队人员使用的数据分析功能。**该程序仅限BLG俱乐部内部使用。**
+本程序仍处于测试调试阶段，目前只囊括部分功能。后续版本将会更新更多可供赛训人员使用的数据分析功能。**该程序仅限BLG俱乐部内部使用。**
 
-本程序基于Python，如有任何建议、意见或疑问请联系[小耗子呀](https://tva1.sinaimg.cn/large/008i3skNgy1gwudm8j4o0j30tc123ju6.jpg)
+如有任何建议、意见或疑问请联系[小耗子呀](https://tva1.sinaimg.cn/large/008i3skNgy1gwudm8j4o0j30tc123ju6.jpg)。
 
 '''
 )
