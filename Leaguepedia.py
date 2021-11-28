@@ -346,3 +346,8 @@ st.write('队伍近期比赛数据：')
 n = st.slider('请选择查看的比赛场数：', 1, len(team_data), 5)
 team_recent_match = team_data.sort_values(by=['DateTime UTC'], ascending=False).head(n)
 st.dataframe(team_recent_match)
+
+
+
+# 自定义数据筛选查询 --------------------------------------------------------------------------
+st.header('自定义数据筛选查询')
