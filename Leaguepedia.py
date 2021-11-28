@@ -31,7 +31,7 @@ options = st.multiselect(
     '请选择联赛和赛季',
     ['LPL/2021 Season/Summer Season', 'LCK/2021 Season/Summer Season',
      'LPL/2021 Season/Spring Season', 'LCK/2021 Season/Spring Season', '2021 Season World Championship/Main Event'],
-    ['LPL/2021 Season/Summer Season'])
+    ['2021 Season World Championship/Main Event'])
 
 where = ''
 for i in options:
@@ -140,6 +140,7 @@ Team2Roles = df['Team2PicksByRoleOrder'].str.split(',', expand=True)
 Team2Roles.columns = ['Team2TOP', 'Team2JUG', 'Team2MID', 'Team2BOT', 'Team2SUP']
 df = df.join(Team1Roles).join(Team2Roles).drop(columns=['Team1PicksByRoleOrder', 'Team2PicksByRoleOrder'])
 df['DateTime UTC'] = pd.to_datetime(df['DateTime UTC']).dt.date
+df = df..sort_values(by=['DateTime UTC'], ascending=False)
 
 st.dataframe(df)
 
@@ -195,6 +196,7 @@ col2.metric("队伍胜场", str(team_dashboard_data.loc[team, 'Wins']))
 col3.metric("队伍总场数", str(team_dashboard_data.loc[team, 'Total']))
 
 st.subheader('队伍比赛数据')
+team_data = team_data.sort_values(by=['DateTime UTC'], ascending=False)
 st.dataframe(team_data)
 
 @st.cache
