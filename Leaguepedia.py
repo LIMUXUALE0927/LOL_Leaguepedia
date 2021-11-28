@@ -335,3 +335,8 @@ with col4:
 with col5:
     st.write('队伍辅助英雄池：')
     st.dataframe(team_sup)
+
+# 队伍近期比赛数据
+st.write('队伍近期比赛数据：')
+team_recent_match = team_data.sort_values(by=['DateTime UTC'], ascending=False).head()
+st.dataframe(team_recent_match)
