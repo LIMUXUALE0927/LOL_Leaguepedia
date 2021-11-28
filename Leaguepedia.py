@@ -140,7 +140,7 @@ df = df.join(Team1Roles).join(Team2Roles).drop(columns=['Team1PicksByRoleOrder',
 df['DateTime UTC'] = pd.to_datetime(df['DateTime UTC']).dt.date
 df = df.sort_values(by=['DateTime UTC'], ascending=False)
 
-st.dataframe(df)
+st.dataframe(df.style.hide_index())
 
 
 @st.cache
