@@ -167,20 +167,17 @@ teams = tmp[0].unique()
 team = st.selectbox('请选择要分析的队伍',(teams))
 
 team_data = df[(df['Team1']==team) | (df['Team2']==team)]
-# Team1Roles = team_data['Team1PicksByRoleOrder'].str.split(',', expand=True)
-# Team1Roles.columns = ['Team1TOP', 'Team1JUG', 'Team1MID', 'Team1BOT', 'Team1SUP']
-# Team2Roles = team_data['Team2PicksByRoleOrder'].str.split(',', expand=True)
-# Team2Roles.columns = ['Team2TOP', 'Team2JUG', 'Team2MID', 'Team2BOT', 'Team2SUP']
-# team_data = team_data.join(Team1Roles).join(Team2Roles).drop(columns=['Team1PicksByRoleOrder', 'Team2PicksByRoleOrder'])
-# team_data['DateTime UTC'] = pd.to_datetime(team_data['DateTime UTC']).dt.date
 
-win_rate = str(round(len(team_data[team_data['WinTeam']==team])/len(team_data), 4) * 100)+'%'
 
 team_dashboard_data = pd.DataFrame()
 for i in teams:
     team_data_i = df[(df['Team1']==i) | (df['Team2']==i)]
+    team_data_blue = df[df['Team1']==i]
+    team_data_red = df[df['Team2']==i]
     metrics_i = pd.DataFrame({'Team': [i],
                               'WinRate': [round(len(team_data_i[team_data_i['WinTeam']==i])/len(team_data_i) * 100 , 2)],
+                              'WinRate_blue': [round(len(team_data_blue[team_data_blue['WinTeam']==i])/len(team_data_blue) * 100 , 2)],
+                              'WinRate_red': [round(len(team_data_red[team_data_red['WinTeam']==i])/len(team_data_red) * 100 , 2)],
                               'Wins': [len(team_data_i[team_data_i['WinTeam']==i])],
                               'Total': [len(team_data_i)]})
     team_dashboard_data = team_dashboard_data.append(metrics_i, ignore_index=True)
@@ -188,10 +185,12 @@ for i in teams:
 team_dashboard_data = team_dashboard_data.set_index('Team')
 team_dashboard_data['WinRate_rank'] = team_dashboard_data['WinRate'].rank(ascending=False).astype(int)
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4, col5 = st.columns(5)
 col1.metric("队伍胜率", str(team_dashboard_data.loc[team, 'WinRate'])+'%', '第{}名'.format(team_dashboard_data.loc[team, 'WinRate_rank']))
 col2.metric("队伍胜场", str(team_dashboard_data.loc[team, 'Wins']))
 col3.metric("队伍总场数", str(team_dashboard_data.loc[team, 'Total']))
+col4.metric("队伍蓝色方胜率", str(team_dashboard_data.loc[team, 'WinRate_blue'])+'%')
+col5.metric("队伍红色方胜率", str(team_dashboard_data.loc[team, 'WinRate_red'])+'%')
 
 st.subheader('队伍比赛数据')
 team_data = team_data.sort_values(by=['DateTime UTC'], ascending=False)
@@ -338,6 +337,6 @@ with col5:
 
 # 队伍近期比赛数据
 st.write('队伍近期比赛数据：')
-n = st.slider('请选择查看的比赛场数：', 1, len(team_data), 1)
+n = st.slider('请选择查看的比赛场数：', 1, len(team_data), 5)
 team_recent_match = team_data.sort_values(by=['DateTime UTC'], ascending=False).head(n)
 st.dataframe(team_recent_match)
