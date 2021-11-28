@@ -235,7 +235,7 @@ team_ban.columns = ['Champion', 'Count']
 col1, col2, col3 = st.columns(3)
 with col1:
     st.write('总体Ban数据：')
-    st.dataframe(team_ban)
+    st.dataframe(team_ban.style.background_gradient("Greens",subset="Count"))
 
 
 with col2:
