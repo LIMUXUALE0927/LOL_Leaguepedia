@@ -6,5 +6,4 @@ plotly
 matplotlib
 seaborn
 mwrogue
-mwrogue-esports_client
 typing
