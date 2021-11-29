@@ -9,7 +9,7 @@ from matplotlib.backends.backend_agg import RendererAgg
 from matplotlib.figure import Figure
 import seaborn as sns
 import mwrogue
-from mwrogue import esports_client
+#from mwrogue import esports_client
 
 st.set_page_config(layout="wide")
 
