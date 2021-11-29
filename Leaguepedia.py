@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_agg import RendererAgg
 from matplotlib.figure import Figure
 import seaborn as sns
+import mwrogue
+from mwrogue import esports_client
 
 st.set_page_config(layout="wide")
 
@@ -350,5 +352,45 @@ st.dataframe(team_recent_match)
 
 
 
-# 自定义数据筛选查询 --------------------------------------------------------------------------
-st.header('自定义数据筛选查询')
+# 选手数据查询 --------------------------------------------------------------------------
+st.header('选手数据查询')
+
+site = mwclient.Site('lol.fandom.com', path='/')
+
+# 获取RiotPlatformGameId
+response = site.api('cargoquery',
+                    limit='max',
+                    tables="MatchScheduleGame=MSG, MatchSchedule=MS",
+                    fields="RiotPlatformGameId, GameId, Blue, Red",
+                    where="MSG.OverviewPage='2021 Season World Championship/Main Event'",
+                    join_on="MSG.MatchId=MS.MatchId",
+                    order_by="MS.DateTime_UTC DESC"
+                    )
+
+data = response['cargoquery']
+data = pd.DataFrame(data[i]['title'] for i in range(len(data)))
+
+lol = mwrogue.esports_client.EsportsClient('lol')
+esports_data = lol.get_data_and_timeline('ESPORTSTMNT04_1961415')
+
+participants_data_complete = pd.DataFrame()
+for i in list(data['RiotPlatformGameId']):
+    esports_data = lol.get_data_and_timeline(i)
+    df1 = pd.DataFrame(esports_data[0]['participantIdentities'])
+    df2 = pd.DataFrame(list(pd.DataFrame(esports_data[0]['participantIdentities']).player))
+    df3 = df1.join(df2).drop(columns=['player', 'profileIcon'])
+    participants = pd.json_normalize(esports_data[0]['participants'])
+    select_columns = ['participantId', 'teamId', 'stats.win', 'championId', 'stats.kills', 'stats.deaths', 'stats.assists',
+                 'stats.totalDamageDealt', 'stats.totalDamageDealtToChampions', 'stats.visionScore', 'stats.timeCCingOthers', 'stats.totalDamageTaken',
+                 'stats.goldEarned', 'stats.turretKills', 'stats.totalMinionsKilled', 'stats.neutralMinionsKilled', 'stats.neutralMinionsKilledTeamJungle',
+                 'stats.neutralMinionsKilledEnemyJungle', 'stats.totalTimeCrowdControlDealt', 'stats.champLevel', 'stats.visionWardsBoughtInGame',
+                 'stats.wardsPlaced', 'stats.wardsKilled', 'stats.firstBloodKill', 'stats.firstBloodAssist', 'stats.firstTowerKill', 'stats.firstTowerAssist',
+                 'timeline.creepsPerMinDeltas.0-10', 'timeline.creepsPerMinDeltas.10-20', 'timeline.creepsPerMinDeltas.20-30', 'timeline.creepsPerMinDeltas.30-end',
+                 'timeline.xpPerMinDeltas.0-10', 'timeline.xpPerMinDeltas.10-20', 'timeline.xpPerMinDeltas.20-30', 'timeline.xpPerMinDeltas.30-end',
+                 'timeline.goldPerMinDeltas.0-10', 'timeline.goldPerMinDeltas.10-20', 'timeline.goldPerMinDeltas.20-30', 'timeline.goldPerMinDeltas.30-end',
+                 ]
+    participants_data = df3.merge(participants[select_columns])
+    participants_data['KDA'] = round((participants_data['stats.kills']+participants_data['stats.assists'])/participants_data['stats.deaths'].replace(0,1), 1)
+    participants_data_complete = participants_data_complete.append(participants_data)
+
+st.dataframe(participants_data_complete)
