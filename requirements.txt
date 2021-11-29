@@ -7,3 +7,4 @@ matplotlib
 seaborn
 mwrogue
 typing
+typing_extensions
