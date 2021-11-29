@@ -392,5 +392,5 @@ for i in list(data['RiotPlatformGameId']):
     participants_data['KDA'] = round((participants_data['stats.kills']+participants_data['stats.assists'])/participants_data['stats.deaths'].replace(0,1), 1)
     participants_data_complete = participants_data_complete.append(participants_data)
 
-participants_data_complete = participants_data_complete[select_columns]
+#participants_data_complete = participants_data_complete[select_columns]
 st.dataframe(participants_data_complete)
