@@ -384,7 +384,7 @@ for i in list(data['RiotPlatformGameId']):
     participants_data_complete = participants_data_complete.append(participants_data)
 
 team_name = participants_data_complete['summonerName'].str.split(' ', expand=True)
-team_name.columns = ['team', 'name']
+team_name.columns = ['team', 'name', '0']
 participants_data_complete = participants_data_complete.join(team_name)
 
 select_columns = ['participantId', 'summonerName', 'team', 'name', 'teamId', 'stats.win', 'championId', 'stats.kills', 'stats.deaths', 'stats.assists', 'KDA',
