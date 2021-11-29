@@ -371,7 +371,15 @@ data = response['cargoquery']
 data = pd.DataFrame(data[i]['title'] for i in range(len(data)))
 
 lol = mwrogue.esports_client.EsportsClient('lol')
-esports_data = lol.get_data_and_timeline('ESPORTSTMNT04_1961415')
+select_columns = ['participantId', 'teamId', 'stats.win', 'championId', 'stats.kills', 'stats.deaths', 'stats.assists',
+             'stats.totalDamageDealt', 'stats.totalDamageDealtToChampions', 'stats.visionScore', 'stats.timeCCingOthers', 'stats.totalDamageTaken',
+             'stats.goldEarned', 'stats.turretKills', 'stats.totalMinionsKilled', 'stats.neutralMinionsKilled', 'stats.neutralMinionsKilledTeamJungle',
+             'stats.neutralMinionsKilledEnemyJungle', 'stats.totalTimeCrowdControlDealt', 'stats.champLevel', 'stats.visionWardsBoughtInGame',
+             'stats.wardsPlaced', 'stats.wardsKilled', 'stats.firstBloodKill', 'stats.firstBloodAssist', 'stats.firstTowerKill', 'stats.firstTowerAssist',
+             'timeline.creepsPerMinDeltas.0-10', 'timeline.creepsPerMinDeltas.10-20', 'timeline.creepsPerMinDeltas.20-30', 'timeline.creepsPerMinDeltas.30-end',
+             'timeline.xpPerMinDeltas.0-10', 'timeline.xpPerMinDeltas.10-20', 'timeline.xpPerMinDeltas.20-30', 'timeline.xpPerMinDeltas.30-end',
+             'timeline.goldPerMinDeltas.0-10', 'timeline.goldPerMinDeltas.10-20', 'timeline.goldPerMinDeltas.20-30', 'timeline.goldPerMinDeltas.30-end',
+             ]
 
 participants_data_complete = pd.DataFrame()
 for i in list(data['RiotPlatformGameId']):
@@ -380,17 +388,9 @@ for i in list(data['RiotPlatformGameId']):
     df2 = pd.DataFrame(list(pd.DataFrame(esports_data[0]['participantIdentities']).player))
     df3 = df1.join(df2).drop(columns=['player', 'profileIcon'])
     participants = pd.json_normalize(esports_data[0]['participants'])
-    select_columns = ['participantId', 'teamId', 'stats.win', 'championId', 'stats.kills', 'stats.deaths', 'stats.assists',
-                 'stats.totalDamageDealt', 'stats.totalDamageDealtToChampions', 'stats.visionScore', 'stats.timeCCingOthers', 'stats.totalDamageTaken',
-                 'stats.goldEarned', 'stats.turretKills', 'stats.totalMinionsKilled', 'stats.neutralMinionsKilled', 'stats.neutralMinionsKilledTeamJungle',
-                 'stats.neutralMinionsKilledEnemyJungle', 'stats.totalTimeCrowdControlDealt', 'stats.champLevel', 'stats.visionWardsBoughtInGame',
-                 'stats.wardsPlaced', 'stats.wardsKilled', 'stats.firstBloodKill', 'stats.firstBloodAssist', 'stats.firstTowerKill', 'stats.firstTowerAssist',
-                 'timeline.creepsPerMinDeltas.0-10', 'timeline.creepsPerMinDeltas.10-20', 'timeline.creepsPerMinDeltas.20-30', 'timeline.creepsPerMinDeltas.30-end',
-                 'timeline.xpPerMinDeltas.0-10', 'timeline.xpPerMinDeltas.10-20', 'timeline.xpPerMinDeltas.20-30', 'timeline.xpPerMinDeltas.30-end',
-                 'timeline.goldPerMinDeltas.0-10', 'timeline.goldPerMinDeltas.10-20', 'timeline.goldPerMinDeltas.20-30', 'timeline.goldPerMinDeltas.30-end',
-                 ]
-    participants_data = df3.merge(participants[select_columns])
+    participants_data = df3.merge(participants)
     participants_data['KDA'] = round((participants_data['stats.kills']+participants_data['stats.assists'])/participants_data['stats.deaths'].replace(0,1), 1)
     participants_data_complete = participants_data_complete.append(participants_data)
 
+participants_data_complete = participants_data_complete[select_columns]
 st.dataframe(participants_data_complete)
