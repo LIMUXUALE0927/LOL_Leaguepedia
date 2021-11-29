@@ -355,6 +355,7 @@ st.dataframe(team_recent_match)
 # 选手数据查询 --------------------------------------------------------------------------
 st.header('选手数据查询')
 from mwrogue import esports_client
+from typing_extensions import Literal
 
 site = mwclient.Site('lol.fandom.com', path='/')
 
