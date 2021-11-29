@@ -396,5 +396,5 @@ select_columns = ['participantId', 'summonerName', 'team', 'name', 'teamId', 'st
              'timeline.xpPerMinDeltas.0-10', 'timeline.xpPerMinDeltas.10-20', 'timeline.xpPerMinDeltas.20-30', 'timeline.xpPerMinDeltas.30-end',
              'timeline.goldPerMinDeltas.0-10', 'timeline.goldPerMinDeltas.10-20', 'timeline.goldPerMinDeltas.20-30', 'timeline.goldPerMinDeltas.30-end',
              ]
-participants_data_complete = participants_data_complete[select_columns].reset_index()
+participants_data_complete = participants_data_complete[select_columns]
 st.dataframe(participants_data_complete)
