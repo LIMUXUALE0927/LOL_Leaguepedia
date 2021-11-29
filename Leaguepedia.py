@@ -383,7 +383,11 @@ for i in list(data['RiotPlatformGameId']):
     participants_data['KDA'] = round((participants_data['stats.kills']+participants_data['stats.assists'])/participants_data['stats.deaths'].replace(0,1), 1)
     participants_data_complete = participants_data_complete.append(participants_data)
 
-select_columns = ['participantId', 'summonerName', 'teamId', 'stats.win', 'championId', 'stats.kills', 'stats.deaths', 'stats.assists', 'KDA',
+team_name = participants_data_complete['summonerName'].str.split(' ', expand=True)
+team_name.columns = ['team', 'name']
+participants_data_complete = participants_data_complete.join(team_name)
+
+select_columns = ['participantId', 'summonerName', 'team', 'name', 'teamId', 'stats.win', 'championId', 'stats.kills', 'stats.deaths', 'stats.assists', 'KDA',
              'stats.totalDamageDealt', 'stats.totalDamageDealtToChampions', 'stats.visionScore', 'stats.timeCCingOthers', 'stats.totalDamageTaken',
              'stats.goldEarned', 'stats.turretKills', 'stats.totalMinionsKilled', 'stats.neutralMinionsKilled', 'stats.neutralMinionsKilledTeamJungle',
              'stats.neutralMinionsKilledEnemyJungle', 'stats.totalTimeCrowdControlDealt', 'stats.champLevel', 'stats.visionWardsBoughtInGame',
