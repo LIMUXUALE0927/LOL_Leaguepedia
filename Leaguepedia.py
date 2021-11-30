@@ -167,15 +167,15 @@ st.download_button(
     mime='text/csv',)
 
 # ===============================================================================
-df = pd.read_html('https://lol.fandom.com/wiki/LPL/2021_Season/Summer_Season')
+LPL = pd.read_html('https://lol.fandom.com/wiki/LPL/2021_Season/Summer_Season')
 
-df = df[22].iloc[6:22]
+LPL = LPL[22].iloc[6:22]
 
-df.columns = ['排名', '队伍', '大场战绩', '大场胜率', '小场战绩', '小场胜率', '净胜', '连胜']
+LPL.columns = ['排名', '队伍', '大场战绩', '大场胜率', '小场战绩', '小场胜率', '净胜', '连胜']
 
 df.set_index('排名')
 
-st.table(df)
+st.table(LPL)
 # ===============================================================================
 
 
