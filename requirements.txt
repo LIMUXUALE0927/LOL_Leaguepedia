@@ -9,3 +9,4 @@ mwrogue
 typing
 typing_extensions
 lxml
+tabulate
