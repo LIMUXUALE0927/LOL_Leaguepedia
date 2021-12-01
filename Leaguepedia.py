@@ -368,7 +368,7 @@ response = site.api('cargoquery',
                     limit='max',
                     tables="MatchScheduleGame=MSG, MatchSchedule=MS",
                     fields="RiotPlatformGameId, GameId, Blue, Red",
-                    where="MSG.OverviewPage={}".format(conditions_MSG),
+                    where=conditions_MSG,
                     join_on="MSG.MatchId=MS.MatchId",
                     order_by="MS.DateTime_UTC DESC"
                     )
