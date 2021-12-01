@@ -400,5 +400,5 @@ select_columns = ['participantId', 'summonerName', 'teamId', 'stats.win', 'champ
              'timeline.goldPerMinDeltas.0-10', 'timeline.goldPerMinDeltas.10-20', 'timeline.goldPerMinDeltas.20-30', 'timeline.goldPerMinDeltas.30-end',
              ]
 participants_data_complete = participants_data_complete[select_columns]
-#participants_data_complete.style.format("{:.1f}")
-st.dataframe(participants_data_complete.style.format("{:.1f}"))
+participants_data_complete.style.format("{:.1f}")
+st.dataframe(participants_data_complete)
