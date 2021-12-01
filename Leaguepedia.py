@@ -17,7 +17,6 @@ st.set_page_config(layout="wide")
 st.title('英雄联盟联赛数据分析程序')
 
 '''
-**简介**：
 
 「英雄联盟联赛数据分析程序」是使用[Leaguepedia](https://lol.fandom.com/wiki/League_of_Legends_Esports_Wiki)的开发者api来获取全球各大联赛（LPL/LDL/LCK/LEC/LCS等）的职业联赛数据的Python程序。
 
@@ -166,17 +165,6 @@ st.download_button(
     file_name='large_df.csv',
     mime='text/csv',)
 
-# ===============================================================================
-LPL = pd.read_html('https://lol.fandom.com/wiki/LPL/2021_Season/Summer_Season')
-
-LPL = LPL[22].iloc[6:22]
-
-LPL.columns = ['排名', '队伍', '大场战绩', '大场胜率', '小场战绩', '小场胜率', '净胜', '连胜']
-
-LPL.set_index('排名')
-
-st.dataframe(LPL)
-# ===============================================================================
 
 
 # 队伍数据查询 --------------------------------------------------------------------------
@@ -367,6 +355,12 @@ st.dataframe(team_recent_match)
 # 选手数据查询 --------------------------------------------------------------------------
 st.header('选手数据查询')
 
+where = ''
+for i in options:
+    where += 'MSG.OverviewPage = {}'.format("'{}'".format(i)) + ' OR '
+
+conditions_MSG = where[:-4]
+
 site = mwclient.Site('lol.fandom.com', path='/')
 
 # 获取RiotPlatformGameId
@@ -374,7 +368,7 @@ response = site.api('cargoquery',
                     limit='max',
                     tables="MatchScheduleGame=MSG, MatchSchedule=MS",
                     fields="RiotPlatformGameId, GameId, Blue, Red",
-                    where="MSG.OverviewPage='2021 Season World Championship/Main Event'",
+                    where="MSG.OverviewPage={}".format(conditions_MSG),
                     join_on="MSG.MatchId=MS.MatchId",
                     order_by="MS.DateTime_UTC DESC"
                     )
