@@ -1,15 +1,15 @@
+from mwrogue import esports_client
+import mwrogue
+import seaborn as sns
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_agg import RendererAgg
+import matplotlib.pyplot as plt
 import streamlit as st
 import pandas as pd
 import mwclient
 import plotly.graph_objects as go
 import matplotlib
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_agg import RendererAgg
-from matplotlib.figure import Figure
-import seaborn as sns
-import mwrogue
-from mwrogue import esports_client
 
 st.set_page_config(layout="wide")
 
@@ -24,8 +24,6 @@ st.title('英雄联盟联赛数据分析程序')
 
 本程序仍处于测试调试阶段，目前只囊括部分功能。后续版本将会更新更多可供赛训人员使用的数据分析功能。
 
-如有任何建议、意见或疑问请联系[小耗子呀](https://tva1.sinaimg.cn/large/008i3skNgy1gwudm8j4o0j30tc123ju6.jpg)。
-
 '''
 
 
@@ -35,9 +33,9 @@ st.header('联赛数据查询')
 # 筛选条件
 options = st.multiselect(
     '请选择联赛和赛季',
-    ['LPL/2021 Season/Summer Season', 'LCK/2021 Season/Summer Season',
-     'LPL/2021 Season/Spring Season', 'LCK/2021 Season/Spring Season', '2021 Season World Championship/Main Event'],
-    ['2021 Season World Championship/Main Event'])
+    ['LPL/2022 Season/Summer Season', 'LCK/2022 Season/Summer Season',
+     'LPL/2022 Season/Spring Season', 'LCK/2022 Season/Spring Season', 'LDL/2022 Season/Spring Season'],
+    ['LPL/2022 Season/Summer Season'])
 
 where = ''
 for i in options:
@@ -51,7 +49,7 @@ site = mwclient.Site('lol.fandom.com', path='/')
 response = site.api('cargoquery',
                     limit='max',
                     tables="ScoreboardGames=SG",
-                    fields="SG.OverviewPage, SG.Tournament, SG.DateTime_UTC, SG.Patch ,SG.Team1, SG.Team2, SG.WinTeam ,SG.Team1Bans, SG.Team2Bans, SG.Team1Picks, SG.Team2Picks, SG.GameId",
+                    fields="SG.OverviewPage, SG.Tournament, SG.DateTime_UTC, SG.Patch ,SG.Team1, SG.Team2, SG.WinTeam, SG.Team1Bans, SG.Team2Bans, SG.Team1Picks, SG.Team2Picks, SG.GameId",
                     where=conditions_SG
                     )
 
@@ -134,17 +132,20 @@ BP = pd.DataFrame(BP_data[i]['title'] for i in range(len(BP_data)))
 data = SG.merge(BP, on='GameId')
 
 df = data[['Tournament', 'Tab', 'DateTime UTC', 'Patch', 'Team1',
-             'Team2', 'WinTeam', 'Team1Ban1', 'Team1Ban2', 'Team1Ban3', 'Team1Ban4', 'Team1Ban5',
-             'Team2Ban1', 'Team2Ban2', 'Team2Ban3', 'Team2Ban4', 'Team2Ban5',
-             'Team1Pick1', 'Team1Pick2', 'Team1Pick3', 'Team1Pick4', 'Team1Pick5',
-             'Team2Pick1', 'Team2Pick2', 'Team2Pick3', 'Team2Pick4', 'Team2Pick5',
-             'Team1PicksByRoleOrder', 'Team2PicksByRoleOrder']]
+           'Team2', 'WinTeam', 'Team1Ban1', 'Team1Ban2', 'Team1Ban3', 'Team1Ban4', 'Team1Ban5',
+           'Team2Ban1', 'Team2Ban2', 'Team2Ban3', 'Team2Ban4', 'Team2Ban5',
+           'Team1Pick1', 'Team1Pick2', 'Team1Pick3', 'Team1Pick4', 'Team1Pick5',
+           'Team2Pick1', 'Team2Pick2', 'Team2Pick3', 'Team2Pick4', 'Team2Pick5',
+           'Team1PicksByRoleOrder', 'Team2PicksByRoleOrder']]
 
 Team1Roles = df['Team1PicksByRoleOrder'].str.split(',', expand=True)
-Team1Roles.columns = ['Team1TOP', 'Team1JUG', 'Team1MID', 'Team1BOT', 'Team1SUP']
+Team1Roles.columns = ['Team1TOP', 'Team1JUG',
+                      'Team1MID', 'Team1BOT', 'Team1SUP']
 Team2Roles = df['Team2PicksByRoleOrder'].str.split(',', expand=True)
-Team2Roles.columns = ['Team2TOP', 'Team2JUG', 'Team2MID', 'Team2BOT', 'Team2SUP']
-df = df.join(Team1Roles).join(Team2Roles).drop(columns=['Team1PicksByRoleOrder', 'Team2PicksByRoleOrder'])
+Team2Roles.columns = ['Team2TOP', 'Team2JUG',
+                      'Team2MID', 'Team2BOT', 'Team2SUP']
+df = df.join(Team1Roles).join(Team2Roles).drop(
+    columns=['Team1PicksByRoleOrder', 'Team2PicksByRoleOrder'])
 df['DateTime UTC'] = pd.to_datetime(df['DateTime UTC']).dt.date
 df = df.sort_values(by=['DateTime UTC'], ascending=False)
 
@@ -166,36 +167,38 @@ st.download_button(
     mime='text/csv',)
 
 
-
 # 队伍数据查询 --------------------------------------------------------------------------
 st.header('队伍数据查询')
 
 tmp = pd.DataFrame(df[['Team1', 'Team2']].unstack())
 teams = tmp[0].unique()
 
-team = st.selectbox('请选择要分析的队伍',(teams))
+team = st.selectbox('请选择要分析的队伍', (teams))
 
-team_data = df[(df['Team1']==team) | (df['Team2']==team)]
+team_data = df[(df['Team1'] == team) | (df['Team2'] == team)]
 
 
 team_dashboard_data = pd.DataFrame()
 for i in teams:
-    team_data_i = df[(df['Team1']==i) | (df['Team2']==i)]
-    team_data_blue = df[df['Team1']==i]
-    team_data_red = df[df['Team2']==i]
+    team_data_i = df[(df['Team1'] == i) | (df['Team2'] == i)]
+    team_data_blue = df[df['Team1'] == i]
+    team_data_red = df[df['Team2'] == i]
     metrics_i = pd.DataFrame({'Team': [i],
-                              'WinRate': [round(len(team_data_i[team_data_i['WinTeam']==i])/len(team_data_i) * 100 , 2)],
-                              'WinRate_blue': [round(len(team_data_blue[team_data_blue['WinTeam']==i])/len(team_data_blue) * 100 , 2)],
-                              'WinRate_red': [round(len(team_data_red[team_data_red['WinTeam']==i])/len(team_data_red) * 100 , 2)],
-                              'Wins': [len(team_data_i[team_data_i['WinTeam']==i])],
+                              'WinRate': [round(len(team_data_i[team_data_i['WinTeam'] == i])/len(team_data_i) * 100, 2)],
+                              'WinRate_blue': [round(len(team_data_blue[team_data_blue['WinTeam'] == i])/len(team_data_blue) * 100, 2)],
+                              'WinRate_red': [round(len(team_data_red[team_data_red['WinTeam'] == i])/len(team_data_red) * 100, 2)],
+                              'Wins': [len(team_data_i[team_data_i['WinTeam'] == i])],
                               'Total': [len(team_data_i)]})
-    team_dashboard_data = team_dashboard_data.append(metrics_i, ignore_index=True)
+    team_dashboard_data = team_dashboard_data.append(
+        metrics_i, ignore_index=True)
 
 team_dashboard_data = team_dashboard_data.set_index('Team')
-team_dashboard_data['WinRate_rank'] = team_dashboard_data['WinRate'].rank(ascending=False).astype(int)
+team_dashboard_data['WinRate_rank'] = team_dashboard_data['WinRate'].rank(
+    ascending=False).astype(int)
 
 col1, col2, col3, col4, col5 = st.columns(5)
-col1.metric("队伍胜率", str(team_dashboard_data.loc[team, 'WinRate'])+'%', '第{}名'.format(team_dashboard_data.loc[team, 'WinRate_rank']))
+col1.metric("队伍胜率", str(team_dashboard_data.loc[team, 'WinRate'])+'%', '第{}名'.format(
+    team_dashboard_data.loc[team, 'WinRate_rank']))
 col2.metric("队伍胜场", str(team_dashboard_data.loc[team, 'Wins']))
 col3.metric("队伍总场数", str(team_dashboard_data.loc[team, 'Total']))
 col4.metric("队伍蓝色方胜率", str(team_dashboard_data.loc[team, 'WinRate_blue'])+'%')
@@ -204,6 +207,7 @@ col5.metric("队伍红色方胜率", str(team_dashboard_data.loc[team, 'WinRate_
 st.subheader('队伍比赛数据')
 team_data = team_data.sort_values(by=['DateTime UTC'], ascending=False)
 st.dataframe(team_data)
+
 
 @st.cache
 def convert_df(df):
@@ -223,15 +227,19 @@ st.download_button(
 st.subheader('队伍BP数据')
 
 # Ban数据
-team_blue = team_data[team_data['Team1']==team]
-team_red = team_data[team_data['Team2']==team]
-team_blue_ban = pd.DataFrame(pd.DataFrame(team_blue[['Team1Ban1', 'Team1Ban2', 'Team1Ban3', 'Team1Ban4', 'Team1Ban5']].unstack())[0].value_counts()).reset_index()
-team_red_ban = pd.DataFrame(pd.DataFrame(team_red[['Team2Ban1', 'Team2Ban2', 'Team2Ban3', 'Team2Ban4', 'Team2Ban5']].unstack())[0].value_counts()).reset_index()
+team_blue = team_data[team_data['Team1'] == team]
+team_red = team_data[team_data['Team2'] == team]
+team_blue_ban = pd.DataFrame(pd.DataFrame(team_blue[[
+                             'Team1Ban1', 'Team1Ban2', 'Team1Ban3', 'Team1Ban4', 'Team1Ban5']].unstack())[0].value_counts()).reset_index()
+team_red_ban = pd.DataFrame(pd.DataFrame(
+    team_red[['Team2Ban1', 'Team2Ban2', 'Team2Ban3', 'Team2Ban4', 'Team2Ban5']].unstack())[0].value_counts()).reset_index()
 team_blue_ban.columns = ['Champion', 'Count']
 team_red_ban.columns = ['Champion', 'Count']
 
-team_ban = team_blue_ban.append(team_red_ban).reset_index().drop(columns=['index'])
-team_ban = pd.DataFrame(team_ban.groupby(['Champion'])['Count'].sum()).sort_values(by='Count', ascending=False).reset_index()
+team_ban = team_blue_ban.append(
+    team_red_ban).reset_index().drop(columns=['index'])
+team_ban = pd.DataFrame(team_ban.groupby(['Champion'])['Count'].sum(
+)).sort_values(by='Count', ascending=False).reset_index()
 team_ban.columns = ['Champion', 'Count']
 
 
@@ -262,15 +270,19 @@ with col3:
 #     st.plotly_chart(fig, use_container_width=True)
 
 # Pick数据
-team_blue = team_data[team_data['Team1']==team]
-team_red = team_data[team_data['Team2']==team]
-team_blue_pick = pd.DataFrame(pd.DataFrame(team_blue[['Team1Pick1', 'Team1Pick2', 'Team1Pick3', 'Team1Pick4', 'Team1Pick5']].unstack())[0].value_counts()).reset_index()
-team_red_pick = pd.DataFrame(pd.DataFrame(team_red[['Team2Pick1', 'Team2Pick2', 'Team2Pick3', 'Team2Pick4', 'Team2Pick5']].unstack())[0].value_counts()).reset_index()
+team_blue = team_data[team_data['Team1'] == team]
+team_red = team_data[team_data['Team2'] == team]
+team_blue_pick = pd.DataFrame(pd.DataFrame(
+    team_blue[['Team1Pick1', 'Team1Pick2', 'Team1Pick3', 'Team1Pick4', 'Team1Pick5']].unstack())[0].value_counts()).reset_index()
+team_red_pick = pd.DataFrame(pd.DataFrame(
+    team_red[['Team2Pick1', 'Team2Pick2', 'Team2Pick3', 'Team2Pick4', 'Team2Pick5']].unstack())[0].value_counts()).reset_index()
 team_blue_pick.columns = ['Champion', 'Count']
 team_red_pick.columns = ['Champion', 'Count']
 
-team_pick = team_blue_pick.append(team_red_pick).reset_index().drop(columns=['index'])
-team_pick = pd.DataFrame(team_pick.groupby(['Champion'])['Count'].sum()).sort_values(by='Count', ascending=False).reset_index()
+team_pick = team_blue_pick.append(
+    team_red_pick).reset_index().drop(columns=['index'])
+team_pick = pd.DataFrame(team_pick.groupby(['Champion'])['Count'].sum(
+)).sort_values(by='Count', ascending=False).reset_index()
 team_pick.columns = ['Champion', 'Count']
 
 
@@ -288,40 +300,55 @@ with col3:
     st.dataframe(team_red_pick)
 
 # 各位置英雄选用数据
-team_blue_top = pd.DataFrame(team_blue['Team1TOP'].value_counts()).reset_index()
+team_blue_top = pd.DataFrame(
+    team_blue['Team1TOP'].value_counts()).reset_index()
 team_blue_top.columns = ['Champion', 'Count']
 team_red_top = pd.DataFrame(team_red['Team2TOP'].value_counts()).reset_index()
 team_red_top.columns = ['Champion', 'Count']
-team_top = team_blue_top.append(team_red_top).reset_index().drop(columns=['index'])
-team_top = pd.DataFrame(team_top.groupby(['Champion'])['Count'].sum()).sort_values(by='Count', ascending=False).reset_index()
+team_top = team_blue_top.append(
+    team_red_top).reset_index().drop(columns=['index'])
+team_top = pd.DataFrame(team_top.groupby(['Champion'])['Count'].sum(
+)).sort_values(by='Count', ascending=False).reset_index()
 
-team_blue_jug = pd.DataFrame(team_blue['Team1JUG'].value_counts()).reset_index()
+team_blue_jug = pd.DataFrame(
+    team_blue['Team1JUG'].value_counts()).reset_index()
 team_blue_jug.columns = ['Champion', 'Count']
 team_red_jug = pd.DataFrame(team_red['Team2JUG'].value_counts()).reset_index()
 team_red_jug.columns = ['Champion', 'Count']
-team_jug = team_blue_jug.append(team_red_jug).reset_index().drop(columns=['index'])
-team_jug = pd.DataFrame(team_jug.groupby(['Champion'])['Count'].sum()).sort_values(by='Count', ascending=False).reset_index()
+team_jug = team_blue_jug.append(
+    team_red_jug).reset_index().drop(columns=['index'])
+team_jug = pd.DataFrame(team_jug.groupby(['Champion'])['Count'].sum(
+)).sort_values(by='Count', ascending=False).reset_index()
 
-team_blue_mid = pd.DataFrame(team_blue['Team1MID'].value_counts()).reset_index()
+team_blue_mid = pd.DataFrame(
+    team_blue['Team1MID'].value_counts()).reset_index()
 team_blue_mid.columns = ['Champion', 'Count']
 team_red_mid = pd.DataFrame(team_red['Team2MID'].value_counts()).reset_index()
 team_red_mid.columns = ['Champion', 'Count']
-team_mid = team_blue_mid.append(team_red_mid).reset_index().drop(columns=['index'])
-team_mid = pd.DataFrame(team_mid.groupby(['Champion'])['Count'].sum()).sort_values(by='Count', ascending=False).reset_index()
+team_mid = team_blue_mid.append(
+    team_red_mid).reset_index().drop(columns=['index'])
+team_mid = pd.DataFrame(team_mid.groupby(['Champion'])['Count'].sum(
+)).sort_values(by='Count', ascending=False).reset_index()
 
-team_blue_bot = pd.DataFrame(team_blue['Team1BOT'].value_counts()).reset_index()
+team_blue_bot = pd.DataFrame(
+    team_blue['Team1BOT'].value_counts()).reset_index()
 team_blue_bot.columns = ['Champion', 'Count']
 team_red_bot = pd.DataFrame(team_red['Team2BOT'].value_counts()).reset_index()
 team_red_bot.columns = ['Champion', 'Count']
-team_bot = team_blue_bot.append(team_red_bot).reset_index().drop(columns=['index'])
-team_bot = pd.DataFrame(team_bot.groupby(['Champion'])['Count'].sum()).sort_values(by='Count', ascending=False).reset_index()
+team_bot = team_blue_bot.append(
+    team_red_bot).reset_index().drop(columns=['index'])
+team_bot = pd.DataFrame(team_bot.groupby(['Champion'])['Count'].sum(
+)).sort_values(by='Count', ascending=False).reset_index()
 
-team_blue_sup = pd.DataFrame(team_blue['Team1SUP'].value_counts()).reset_index()
+team_blue_sup = pd.DataFrame(
+    team_blue['Team1SUP'].value_counts()).reset_index()
 team_blue_sup.columns = ['Champion', 'Count']
 team_red_sup = pd.DataFrame(team_red['Team2SUP'].value_counts()).reset_index()
 team_red_sup.columns = ['Champion', 'Count']
-team_sup = team_blue_sup.append(team_red_sup).reset_index().drop(columns=['index'])
-team_sup = pd.DataFrame(team_sup.groupby(['Champion'])['Count'].sum()).sort_values(by='Count', ascending=False).reset_index()
+team_sup = team_blue_sup.append(
+    team_red_sup).reset_index().drop(columns=['index'])
+team_sup = pd.DataFrame(team_sup.groupby(['Champion'])['Count'].sum(
+)).sort_values(by='Count', ascending=False).reset_index()
 
 col1, col2, col3, col4, col5 = st.columns(5)
 with col1:
@@ -347,9 +374,9 @@ with col5:
 # 队伍近期比赛数据
 st.write('队伍近期比赛数据：')
 n = st.slider('请选择查看的比赛场数：', 1, len(team_data), 5)
-team_recent_match = team_data.sort_values(by=['DateTime UTC'], ascending=False).head(n)
+team_recent_match = team_data.sort_values(
+    by=['DateTime UTC'], ascending=False).head(n)
 st.dataframe(team_recent_match)
-
 
 
 # 选手数据查询 --------------------------------------------------------------------------
@@ -382,23 +409,26 @@ participants_data_complete = pd.DataFrame()
 for i in list(data['RiotPlatformGameId']):
     esports_data = lol.get_data_and_timeline(i)
     df1 = pd.DataFrame(esports_data[0]['participantIdentities'])
-    df2 = pd.DataFrame(list(pd.DataFrame(esports_data[0]['participantIdentities']).player))
+    df2 = pd.DataFrame(
+        list(pd.DataFrame(esports_data[0]['participantIdentities']).player))
     df3 = df1.join(df2).drop(columns=['player', 'profileIcon'])
     participants = pd.json_normalize(esports_data[0]['participants'])
     participants_data = df3.merge(participants)
-    participants_data['KDA'] = round((participants_data['stats.kills']+participants_data['stats.assists'])/participants_data['stats.deaths'].replace(0,1), 1)
-    participants_data_complete = participants_data_complete.append(participants_data)
+    participants_data['KDA'] = round(
+        (participants_data['stats.kills']+participants_data['stats.assists'])/participants_data['stats.deaths'].replace(0, 1), 1)
+    participants_data_complete = participants_data_complete.append(
+        participants_data)
 
 
 select_columns = ['participantId', 'summonerName', 'teamId', 'stats.win', 'championId', 'stats.kills', 'stats.deaths', 'stats.assists', 'KDA',
-             'stats.totalDamageDealt', 'stats.totalDamageDealtToChampions', 'stats.visionScore', 'stats.timeCCingOthers', 'stats.totalDamageTaken',
-             'stats.goldEarned', 'stats.turretKills', 'stats.totalMinionsKilled', 'stats.neutralMinionsKilled', 'stats.neutralMinionsKilledTeamJungle',
-             'stats.neutralMinionsKilledEnemyJungle', 'stats.totalTimeCrowdControlDealt', 'stats.champLevel', 'stats.visionWardsBoughtInGame',
-             'stats.wardsPlaced', 'stats.wardsKilled', 'stats.firstBloodKill', 'stats.firstBloodAssist', 'stats.firstTowerKill', 'stats.firstTowerAssist',
-             'timeline.creepsPerMinDeltas.0-10', 'timeline.creepsPerMinDeltas.10-20', 'timeline.creepsPerMinDeltas.20-30', 'timeline.creepsPerMinDeltas.30-end',
-             'timeline.xpPerMinDeltas.0-10', 'timeline.xpPerMinDeltas.10-20', 'timeline.xpPerMinDeltas.20-30', 'timeline.xpPerMinDeltas.30-end',
-             'timeline.goldPerMinDeltas.0-10', 'timeline.goldPerMinDeltas.10-20', 'timeline.goldPerMinDeltas.20-30', 'timeline.goldPerMinDeltas.30-end',
-             ]
+                  'stats.totalDamageDealt', 'stats.totalDamageDealtToChampions', 'stats.visionScore', 'stats.timeCCingOthers', 'stats.totalDamageTaken',
+                  'stats.goldEarned', 'stats.turretKills', 'stats.totalMinionsKilled', 'stats.neutralMinionsKilled', 'stats.neutralMinionsKilledTeamJungle',
+                  'stats.neutralMinionsKilledEnemyJungle', 'stats.totalTimeCrowdControlDealt', 'stats.champLevel', 'stats.visionWardsBoughtInGame',
+                  'stats.wardsPlaced', 'stats.wardsKilled', 'stats.firstBloodKill', 'stats.firstBloodAssist', 'stats.firstTowerKill', 'stats.firstTowerAssist',
+                  'timeline.creepsPerMinDeltas.0-10', 'timeline.creepsPerMinDeltas.10-20', 'timeline.creepsPerMinDeltas.20-30', 'timeline.creepsPerMinDeltas.30-end',
+                  'timeline.xpPerMinDeltas.0-10', 'timeline.xpPerMinDeltas.10-20', 'timeline.xpPerMinDeltas.20-30', 'timeline.xpPerMinDeltas.30-end',
+                  'timeline.goldPerMinDeltas.0-10', 'timeline.goldPerMinDeltas.10-20', 'timeline.goldPerMinDeltas.20-30', 'timeline.goldPerMinDeltas.30-end',
+                  ]
 participants_data_complete = participants_data_complete[select_columns]
 participants_data_complete.style.format("{:.1f}")
 st.dataframe(participants_data_complete)
